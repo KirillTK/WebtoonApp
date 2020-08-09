@@ -3,43 +3,26 @@ import { Strategy as LocalStrategy } from 'passport-local';
 import { User } from './models';
 import { generateHash, validPassword } from './services/passport';
 
-passport.serializeUser(({ id }, done) => {
-  done(null, id);
-});
+passport.use(User.createStrategy());
 
-passport.deserializeUser((id, done) => {
-  User.findById(id, (err, user) => {
-    done(err, user);
-  });
-});
-
-passport.use('local-login', new LocalStrategy({
-  usernameField: 'email',
-  passwordField: 'password',
-  passReqToCallback: true,
-}, (req, email, password, done) => {
-  User.findOne({ email }, (err, user) => {
-    if (err) return done(err);
-    if (!user) return done({ message: 'Incorrect details' }, false);
-    if (!validPassword(password, user.password)) {
-      return done({ message: 'Incorrect password or email' }, false);
-    }
-    return done(null, user);
-  });
-}));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 passport.use('local-signup', new LocalStrategy({
-  usernameField: 'email',
+  usernameField: 'username',
   passwordField: 'password',
   passReqToCallback: true,
-}, (req, email, password, done) => {
-  User.findOne({ email }, (err, user) => {
-    if (user) {
-      return done({ message: 'This email is already using' }, false);
-    } else {
-      const user = new User({ email, password: generateHash(password) });
-      user.save().then((user) => done(null, user));
+}, (req, username, password, done) => {
+
+  console.log(req.body);
+  User.register(new User({ username: req.body.username }), req.body.password, (err, user) => {
+    if (err) {
+      console.log(err);
+      return res.send('register');
     }
+    passport.authenticate('local')(req, res, () => {
+      res.redirect('/secret');
+    });
   });
 }));
 
