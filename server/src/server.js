@@ -35,25 +35,16 @@ const session = expressSession({
   }
 })();
 
-// Controllers;
-app.use(loginRoutes);
-
 app.use(logger('dev'));
 app.use(cookieParser());
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 app.use(session);
 app.use(passport.initialize());
 app.use(passport.session());
 
-// const router = express.Router();
-
-// router.get('/hello', (req, res) => {
-//   console.log('here');
-//   res.send({ name: 'kriill' });
-// });
-
-// app.use(router);
+app.use(loginRoutes);
 
 const server = https.createServer({ key, cert }, app);
 
