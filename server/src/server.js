@@ -7,10 +7,13 @@ import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import { resolve } from 'path';
 import https from 'https';
+import * as cron from 'node-cron';
 import fs from 'fs';
 import { passport } from './passport';
+import { updateComicsList } from './services/update-comics-list';
+import { UPDATE_COMICS_TIME_PATTERN } from './constants';
 
-import { loginRoutes } from './controllers/auth';
+import { loginRoutes, webtoonRoutes } from './controllers';
 
 dotenv.config();
 
@@ -45,7 +48,10 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(loginRoutes);
+app.use(webtoonRoutes);
 
 const server = https.createServer({ key, cert }, app);
 
 server.listen(process.env.PORT, () => console.log(`Listening on ${process.env.PORT} port`));
+
+cron.schedule(UPDATE_COMICS_TIME_PATTERN, updateComicsList);
