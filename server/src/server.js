@@ -48,7 +48,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(loginRoutes);
-app.use(webtoonRoutes);
+app.use('/comics', webtoonRoutes);
 
 const server = https.createServer({ key, cert }, app);
 
