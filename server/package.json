@@ -8,6 +8,9 @@
     "lint": "eslint ./src",
     "lint:fix": "eslint ./src --fix"
   },
+  "engines": {
+    "node": "14.8.0"
+  },
   "author": "KirillTK",
   "license": "ISC",
   "dependencies": {
