@@ -5,10 +5,7 @@ import expressSession from 'express-session';
 import logger from 'morgan';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
-import { resolve } from 'path';
-import https from 'https';
 import * as cron from 'node-cron';
-import fs from 'fs';
 import { passport } from './passport';
 import { updateComicsList } from './services/update-comics-list';
 import { UPDATE_COMICS_TIME_PATTERN } from './constants';
@@ -16,9 +13,6 @@ import { UPDATE_COMICS_TIME_PATTERN } from './constants';
 import { loginRoutes, webtoonRoutes } from './controllers';
 
 dotenv.config();
-
-const key = fs.readFileSync(resolve(__dirname, '../localhost.key'));
-const cert = fs.readFileSync(resolve(__dirname, '../localhost.crt'));
 
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/webtoon';
 const PORT = process.env.PORT || 8080;
@@ -53,8 +47,6 @@ app.use(passport.session());
 app.use(loginRoutes);
 app.use('/comics', webtoonRoutes);
 
-const server = https.createServer({ key, cert }, app);
-
-server.listen(PORT, () => console.log(`Listening on ${PORT} port`));
+app.listen(PORT, () => console.log(`Listening on ${PORT} port`));
 
 cron.schedule(UPDATE_COMICS_TIME_PATTERN, updateComicsList);
