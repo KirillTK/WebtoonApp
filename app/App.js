@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -16,7 +16,14 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
+import { Api } from './src/services/api';
+
 const App = () => {
+
+useEffect(() => {
+  Api.getComics().then( res => console.log(res));
+}, []);
+
   return (
     <>
       <StatusBar barStyle="dark-content" />
