@@ -1,58 +1,52 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import cookieParser from 'cookie-parser';
+import expressSession from 'express-session';
 import logger from 'morgan';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
-import { resolve } from 'path';
-import https from 'https';
-import fs from 'fs';
+import * as cron from 'node-cron';
 import { passport } from './passport';
+import { updateComicsList } from './services/update-comics-list';
+import { UPDATE_COMICS_TIME_PATTERN } from './constants';
 
-import { loginRoutes } from './controllers/auth';
+import { loginRoutes, webtoonRoutes } from './controllers';
 
 dotenv.config();
 
-console.log(resolve(`${__dirname}../keytmp.pem`));
-
-const key = fs.readFileSync(resolve(__dirname, '../key.pem'));
-const cert = fs.readFileSync(resolve(__dirname, '../cert.pem'));
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/webtoon';
+const PORT = process.env.PORT || 8080;
 
 const app = express();
 
+const session = expressSession({
+  secret: 'secret',
+  resave: false,
+  saveUninitialized: false,
+});
+
 (async () => {
   try {
-    await mongoose.connect(process.env.DB_CONNECT, { useNewUrlParser: true });
+    await mongoose
+      .connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
     console.log('Mongoose up!');
   } catch (e) {
     console.log('Connection db failed');
   }
 })();
 
-// Controllers;
-app.use(loginRoutes);
-
 app.use(logger('dev'));
 app.use(cookieParser());
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+
+app.use(session);
 app.use(passport.initialize());
 app.use(passport.session());
 
-const router = express.Router();
+app.use(loginRoutes);
+app.use('/comics', webtoonRoutes);
 
-router.get('/hello', (req, res) => {
-  console.log('here');
-  res.send({ name: 'kriill' });
-});
+app.listen(PORT, () => console.log(`Listening on ${PORT} port`));
 
-app.use(router);
-//
-// app.post('/login',
-//   passport.authenticate('local-login', { failureRedirect: '/login' }),
-//   (req, res) => {
-//     res.redirect('/');
-//   });
-
-const server = https.createServer({ key, cert }, app);
-
-server.listen(process.env.PORT, () => console.log(`Listening on ${process.env.PORT} port`));
+cron.schedule(UPDATE_COMICS_TIME_PATTERN, updateComicsList);

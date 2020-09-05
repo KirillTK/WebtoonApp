@@ -1,9 +1,12 @@
 import mongoose from 'mongoose';
+import passportLocalMongoose from 'passport-local-mongoose';
 
 const UserSchema = new mongoose.Schema({
-  email: { type: String, unique: true },
-  password: String,
-  date: { type: Date, default: Date.now },
+  username: { type: String, unique: true, required: true },
+  password: { type: String, required: true },
+  date: { type: Date, default: Date.now() },
 });
 
-export const User = mongoose.model('User', UserSchema);
+UserSchema.plugin(passportLocalMongoose);
+
+export const User = mongoose.model('user', UserSchema, 'user');
