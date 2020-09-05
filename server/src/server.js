@@ -14,8 +14,10 @@ import { loginRoutes, webtoonRoutes } from './controllers';
 
 dotenv.config();
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/webtoon';
+const { MONGODB_URI, NODE_ENV } = process.env;
+const API_PREFIX = '/api';
 const PORT = process.env.PORT || 8080;
+const loggerMode = NODE_ENV === 'production' ? 'common' : 'dev';
 
 const app = express();
 
@@ -35,7 +37,7 @@ const session = expressSession({
   }
 })();
 
-app.use(logger('dev'));
+app.use(logger(loggerMode));
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -44,8 +46,8 @@ app.use(session);
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use(loginRoutes);
-app.use('/comics', webtoonRoutes);
+app.use(`${API_PREFIX}/`, loginRoutes);
+app.use(`${API_PREFIX}/comics`, webtoonRoutes);
 
 app.listen(PORT, () => console.log(`Listening on ${PORT} port`));
 
