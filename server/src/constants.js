@@ -1,1 +1,1 @@
-export const UPDATE_COMICS_TIME_PATTERN = '* * 23 * * *';
+export const UPDATE_COMICS_TIME_PATTERN = '*/20 * * * *';
