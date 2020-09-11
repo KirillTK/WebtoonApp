@@ -2,6 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import cookieParser from 'cookie-parser';
 import expressSession from 'express-session';
+import cors from 'cors';
 import logger from 'morgan';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
@@ -45,6 +46,7 @@ app.use(bodyParser.json());
 app.use(session);
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(cors());
 
 app.use(`${API_PREFIX}/`, loginRoutes);
 app.use(`${API_PREFIX}/comics`, webtoonRoutes);
