@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
+import React, {useCallback} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
   ScrollView,
   View,
   Text,
+  Button,
   StatusBar,
 } from 'react-native';
 
@@ -16,16 +17,13 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
-import { Api } from './src/services/api';
+import {Provider} from 'react-redux';
+import {store} from './src/store';
+import {ComicsList} from './src/screens';
 
 const App = () => {
-
-useEffect(() => {
-  Api.getComics().then( res => console.log(res));
-}, []);
-
   return (
-    <>
+    <Provider store={store}>
       <StatusBar barStyle="dark-content" />
       <SafeAreaView>
         <ScrollView
@@ -43,6 +41,7 @@ useEffect(() => {
                 Edit <Text style={styles.highlight}>App.js</Text> to change this
                 screen and then come back to see your edits.
               </Text>
+              <ComicsList />
             </View>
             <View style={styles.sectionContainer}>
               <Text style={styles.sectionTitle}>See Your Changes</Text>
@@ -66,7 +65,7 @@ useEffect(() => {
           </View>
         </ScrollView>
       </SafeAreaView>
-    </>
+    </Provider>
   );
 };
 
