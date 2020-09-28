@@ -3444,9 +3444,9 @@ vary@^1, vary@~1.1.2:
   resolved "https://registry.yarnpkg.com/vary/-/vary-1.1.2.tgz#2299f02c6ded30d4a5961b0b9f74524a18f634fc"
   integrity sha1-IpnwLG3tMNSllhsLn3RSShj2NPw=
 
-"webtoon-parser@https://github.com/KirillTK/WebtoonAPI#1.0.2":
-  version "1.0.2"
-  resolved "https://github.com/KirillTK/WebtoonAPI#92e9ba6d0685c5cd0351ab9cf995df76609e933f"
+"webtoon-parser@https://github.com/KirillTK/WebtoonAPI#1.0.3":
+  version "1.0.3"
+  resolved "https://github.com/KirillTK/WebtoonAPI#73fe49da9d3749b58178fba7db7a55be5816de09"
   dependencies:
     dom-parser "^0.1.6"
     node-fetch "^2.6.0"

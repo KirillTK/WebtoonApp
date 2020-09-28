@@ -18,9 +18,9 @@ const getFullComicsInfo = async (req, res) => {
 };
 
 const getEpisode = async (req, res) => {
-  const { link } = req.query;
+  const { link, episodeNumber } = req.query;
 
-  const episode = await parser.getEpisodeByUrl(link);
+  const episode = await parser.getEpisodeByUrl(link, episodeNumber);
 
   res.json({ ...episode });
 };
