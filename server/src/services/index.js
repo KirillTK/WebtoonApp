@@ -1,0 +1,1 @@
+export { webtoonService } from './webtoon';
