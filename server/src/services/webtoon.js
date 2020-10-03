@@ -6,7 +6,7 @@ const webtoonParser = new WebtoonParser();
 
 class WebtoonService {
   getComicsList() {
-    return Comics.find({});
+    return Comics.find({}, '_id link image name author');
   }
 
   getComicsById(_id) {
@@ -26,6 +26,14 @@ class WebtoonService {
     const episodes = sort(this.comicsDateDiff, flattenList);
 
     return { ...fullInfo, episodes };
+  }
+
+  async getComicsEpisode(idComics, idEpisode) {
+    const comics = await this.getComicsById(idComics);
+
+    const { episodeUrl } = comics.episodes.find((episode) => episode.id === idEpisode) || {};
+
+    return episodeUrl ? webtoonParser.getEpisodeByUrl(episodeUrl) : null;
   }
 }
 
