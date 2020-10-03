@@ -1,20 +1,22 @@
 import { Router } from 'express';
 import { WebtoonParser } from 'webtoon-parser';
-import { Comics } from '../models';
+import { webtoonService } from '../services';
 
 const route = Router();
 const parser = new WebtoonParser();
 
 const getComicsList = async (req, res) => {
-  const list = await Comics.find({});
+  const list = await webtoonService.getComicsList();
 
   res.json({ list });
 };
 
 const getFullComicsInfo = async (req, res) => {
-  const { link } = req.query;
-  const fullInfo = await parser.getFullInfo({ link });
-  res.json({ ...fullInfo });
+  const { id } = req.query;
+
+  const comicsData = await webtoonService.getComicsById(id);
+
+  res.json(comicsData);
 };
 
 const getEpisode = async (req, res) => {
