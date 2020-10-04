@@ -4,7 +4,7 @@ import { webtoonService } from '../services';
 const route = Router();
 
 const getComicsList = async (req, res) => {
-  const list = await webtoonService.getComicsListWithPreview();
+  const list = await webtoonService.getComicsList();
 
   res.json(list);
 };
