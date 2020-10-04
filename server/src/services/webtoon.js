@@ -1,5 +1,6 @@
 import { WebtoonParser } from 'webtoon-parser';
 import { flatten, sort } from 'ramda';
+import { previewService } from './preview.service';
 import { Comics } from '../models';
 
 const webtoonParser = new WebtoonParser();
@@ -7,6 +8,14 @@ const webtoonParser = new WebtoonParser();
 class WebtoonService {
   getComicsList() {
     return Comics.find({}, '_id link image name author');
+  }
+
+  async getComicsListWithPreview() {
+    const listDoc = await this.getComicsList();
+
+    const list = listDoc.map((item) => item.toObject());
+
+    return previewService.getImagePreviews(list, 'image');
   }
 
   getComicsById(_id) {
@@ -33,7 +42,15 @@ class WebtoonService {
 
     const { episodeUrl } = comics.episodes.find((episode) => episode.id === idEpisode) || {};
 
-    return episodeUrl ? webtoonParser.getEpisodeByUrl(episodeUrl) : null;
+    if (!episodeUrl) {
+      return null;
+    }
+
+    const episode = await webtoonParser.getEpisodeByUrl(episodeUrl);
+
+    const previewsInBlob = await previewService.getImagePreviews(episode.content);
+
+    return { ...episode, content: previewsInBlob };
   }
 }
 
